@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Töxln l'Üšnãt</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    body {
+      font-family: monospace;
+      background-color: #111;
+      color: #0f0;
+      font-size: 2em;
+      text-align: center;
+      padding-top: 20vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .light-mode {
+      background-color: #f4f4f4;
+      color: #222;
+    }
+
+    #toggle-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 0.25em;
+      padding: 0.4em 0.5em;
+      background: none;
+      border: 0px solid currentColor;
+      border-radius: 20px;
+      color: inherit;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    #toggle-button:hover {
+      background-color: rgba(0, 255, 0, 0.1);
+    }
+
+    .toggle-button1 {
+      position: absolute;
+      font-family: monospace;
+      top: 10px;
+      left: 10px;
+      font-size: 0.75em;
+      padding: 0.4em 0.5em;
+      background: none;
+      border: 0px solid currentColor;
+      border-radius: 20px;
+      color: inherit;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .toggle-button1:hover {
+      background-color: rgba(0, 255, 0, 0.1);
+    }
+
+    .light-mode #toggle-button:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    #conworld-time {
+      opacity: 1;
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    .tick {
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <button id="toggle-button"><svg height="25" width="25" xmlns="image.svg">
+  <image height="25" width="25" href="dl.svg" />
+</svg></button>
+  <button class="toggle-button1">Töxln l'Üšnãt</button>
+  <div id="conworld-time"></div>
+
+  <script>
+    // Constants
+    const EARTH_START = new Date('2025-01-01T00:00:00+00:00');
+    const EARTH_SECONDS_PER_CONWORLD_DAY = 84120;
+    const CONWORLD_HOURS_PER_DAY = 12;
+    const CONWORLD_MINUTES_PER_HOUR = 72;
+    const CONWORLD_SECONDS_PER_MINUTE = 144;
+    const CONWORLD_SECONDS_PER_HOUR = CONWORLD_MINUTES_PER_HOUR * CONWORLD_SECONDS_PER_MINUTE;
+    const CONWORLD_SECONDS_PER_DAY = CONWORLD_HOURS_PER_DAY * CONWORLD_SECONDS_PER_HOUR;
+
+    // Month names with only first letter capitalized
+    const MONTHS = [
+      { name: "+", days: 3 },
+      { name: "Sűljë", days: 48 },
+      { name: "Tētsi", days: 48 },
+      { name: "Eježjë", days: 48 },
+      { name: "Šīlot", days: 48 },
+      { name: "Kwīlš", days: 48 },
+      { name: "Ngūk", days: 48 },
+      { name: "-", days: 3 },
+    ];
+
+    const TOTAL_DAYS = MONTHS.reduce((sum, m) => sum + m.days, 0);
+    const display = document.getElementById('conworld-time');
+
+    function updateConworldTime() {
+      const now = new Date();
+      const elapsedEarthSeconds = (now - EARTH_START) / 1000;
+      const conworldDaysFloat = elapsedEarthSeconds / EARTH_SECONDS_PER_CONWORLD_DAY;
+
+      const conworldDayOfYear = Math.floor(conworldDaysFloat) % TOTAL_DAYS;
+      const conworldSecondsToday = (conworldDaysFloat % 1) * CONWORLD_SECONDS_PER_DAY;
+
+      const hour = Math.floor(conworldSecondsToday / CONWORLD_SECONDS_PER_HOUR) + 1;
+      const minute = Math.floor((conworldSecondsToday % CONWORLD_SECONDS_PER_HOUR) / CONWORLD_SECONDS_PER_MINUTE);
+      const second = Math.floor(conworldSecondsToday % CONWORLD_SECONDS_PER_MINUTE);
+
+      let dayCounter = 0;
+      let monthName = "";
+      let dayInMonth = 0;
+
+      for (let month of MONTHS) {
+        if (conworldDayOfYear < dayCounter + month.days) {
+          monthName = month.name;
+          dayInMonth = conworldDayOfYear - dayCounter + 1;
+          break;
+        }
+        dayCounter += month.days;
+      }
+
+      const HH = String(hour).padStart(2, '0');
+      const MM = String(minute).padStart(2, '0');
+      const SSS = String(second).padStart(3, '0');
+
+      // Animate tick
+      display.classList.add('tick');
+      setTimeout(() => display.classList.remove('tick'), 100);
+
+      display.innerHTML = `Tjë lekwãt õt töxln<br><b>${monthName} ${dayInMonth}</b><br><br>Tjë lekwãt õt üšnãt<br><b>${HH}:${MM}:${SSS}</b>`;
+    }
+
+    updateConworldTime();
+    setInterval(updateConworldTime, 50);
+
+    // Theme toggle with localStorage
+    const toggleButton = document.getElementById('toggle-button');
+
+    function applyTheme(theme) {
+      document.body.classList.toggle('light-mode', theme === 'light');
+      localStorage.setItem('theme', theme);
+    }
+
+    // Initial theme from localStorage
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    applyTheme(savedTheme);
+
+    toggleButton.addEventListener('click', () => {
+      const isLight = document.body.classList.contains('light-mode');
+      applyTheme(isLight ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>
