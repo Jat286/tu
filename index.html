@@ -3,16 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <title>Töxln l'Üšnãt</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <style>
-    body {
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
       font-family: monospace;
       background-color: #111;
       color: #0f0;
-      font-size: 2em;
-      text-align: center;
-      padding-top: 20vh;
       transition: background-color 0.3s, color 0.3s;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    #conworld-time {
+      font-size: clamp(1.5rem, 5vw, 2.5rem); /* Responsive font size */
+      line-height: 1.5;
+      max-width: 90vw;
+      opacity: 1;
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    .tick {
+      opacity: 0.5;
     }
 
     .light-mode {
@@ -24,10 +45,10 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      font-size: 0.25em;
+      font-size: 0.75rem;
       padding: 0.4em 0.5em;
       background: none;
-      border: 0px solid currentColor;
+      border: none;
       border-radius: 20px;
       color: inherit;
       cursor: pointer;
@@ -38,43 +59,36 @@
       background-color: rgba(0, 255, 0, 0.1);
     }
 
-    .toggle-button1 {
-      position: absolute;
-      font-family: monospace;
-      top: 10px;
-      left: 10px;
-      font-size: 0.75em;
-      padding: 0.4em 0.5em;
-      background: none;
-      border: 0px solid currentColor;
-      border-radius: 20px;
-      color: inherit;
-      cursor: pointer;
-      transition: background 0.3s, color 0.3s;
-    }
-
-    .toggle-button1:hover {
-      background-color: rgba(0, 255, 0, 0.1);
-    }
-
     .light-mode #toggle-button:hover {
       background-color: rgba(0, 0, 0, 0.05);
     }
 
-    #conworld-time {
-      opacity: 1;
-      transition: opacity 0.2s ease-in-out;
-    }
+.toggle-button1 {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-family: monospace;
+  font-size: 1.5rem; /* Increased from 1rem */
+  padding: 0.6em 0.8em; /* More padding for a bigger feel */
+  background: none;
+  border: none;
+  border-radius: 20px;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
 
-    .tick {
-      opacity: 0.5;
+    .toggle-button1:hover {
+      background-color: rgba(0, 255, 0, 0.1);
     }
   </style>
 </head>
 <body>
-  <button id="toggle-button"><svg height="25" width="25" xmlns="image.svg">
-  <image height="25" width="25" href="dl.svg" />
-</svg></button>
+  <button id="toggle-button">
+    <svg height="25" width="25" xmlns="image.svg">
+      <image height="25" width="25" href="dl.svg" />
+    </svg>
+  </button>
   <button class="toggle-button1">Töxln l'Üšnãt</button>
   <div id="conworld-time"></div>
 
@@ -88,7 +102,6 @@
     const CONWORLD_SECONDS_PER_HOUR = CONWORLD_MINUTES_PER_HOUR * CONWORLD_SECONDS_PER_MINUTE;
     const CONWORLD_SECONDS_PER_DAY = CONWORLD_HOURS_PER_DAY * CONWORLD_SECONDS_PER_HOUR;
 
-    // Month names with only first letter capitalized
     const MONTHS = [
       { name: "+", days: 3 },
       { name: "Sűljë", days: 48 },
@@ -132,7 +145,6 @@
       const MM = String(minute).padStart(2, '0');
       const SSS = String(second).padStart(3, '0');
 
-      // Animate tick
       display.classList.add('tick');
       setTimeout(() => display.classList.remove('tick'), 100);
 
@@ -142,15 +154,8 @@
     updateConworldTime();
     setInterval(updateConworldTime, 50);
 
-    // Theme toggle with localStorage
+    // Theme toggle
     const toggleButton = document.getElementById('toggle-button');
-
-    function applyTheme(theme) {
-      document.body.classList.toggle('light-mode', theme === 'light');
-      localStorage.setItem('theme', theme);
-    }
-
-    // Initial theme from localStorage
     const savedTheme = localStorage.getItem('theme') || 'dark';
     applyTheme(savedTheme);
 
@@ -158,6 +163,11 @@
       const isLight = document.body.classList.contains('light-mode');
       applyTheme(isLight ? 'dark' : 'light');
     });
+
+    function applyTheme(theme) {
+      document.body.classList.toggle('light-mode', theme === 'light');
+      localStorage.setItem('theme', theme);
+    }
   </script>
 </body>
 </html>
